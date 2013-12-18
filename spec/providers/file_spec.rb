@@ -20,7 +20,7 @@ describe 'haproxy_config::file' do
       expect(File.directory?(haproxy_config_path)).to be true
     end
 
-    it 'creates an haproxy config file based on node attributes' do
+    it 'creates an haproxy config file resource name' do
       expect(File.file?(haproxy_config_file)).to be false
 
       converge_recipe "file", %[

@@ -21,7 +21,7 @@ describe HaproxyConfig do
   end
 
   describe '#to_s' do
-    it 'recursively calls #to_s on all sections and joins with \n\n' do
+    it 'calls #to_s on all sections and joins with \n\n' do
       section1 = double(to_s: "section 1")
       section2 = double(to_s: "section 2")
 
