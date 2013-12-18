@@ -8,4 +8,5 @@ group :development, :test do
   gem 'guard-bundler'
   gem 'aruba-doubles'
   gem 'pry-nav'
+  gem 'terminal-notifier-guard'
 end
