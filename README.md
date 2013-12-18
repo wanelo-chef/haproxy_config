@@ -1,6 +1,8 @@
 haproxy_config
 ==============
 
+[![Build Status](https://travis-ci.org/wanelo-chef/haproxy_config.png?branch=master)](https://travis-ci.org/wanelo-chef/haproxy_config)
+
 This cookbook provides LWRPs for configuring haproxy with multiple
 frontends and backends. It depends on the `haproxy` cookbook to
 install the service, but then allows you to programmatically
@@ -25,7 +27,7 @@ TODO
 ### LWRPS
 
 ```ruby
-haproxy_global do
+haproxy_config_global do
   daemon true
   log '127.0.0.1', facility: 'local0'
   log '127.0.0.1', facility: 'local1', severity: 'notice'
@@ -36,7 +38,7 @@ haproxy_global do
   group node['haproxy']['group']
 end
 
-haproxy_defaults do
+haproxy_config_defaults do
   log     'global'
   mode    'http'
   retries 3
@@ -56,7 +58,7 @@ haproxy_defaults do
   balance 'roundrobin'
 end
 
-haproxy_stats 'admin' do
+haproxy_config_stats 'admin' do
   mode 'http'
   bind '127.0.0.1'
   port 2200
@@ -66,14 +68,14 @@ haproxy_stats 'admin' do
   refresh '3s'
 end
 
-haproxy_frontend 'solr' do
+haproxy_config_frontend 'solr' do
   maxconn 2000
   ip '127.0.0.1'
   port 9985
   default_backend 'solr-servers'
 end
 
-haproxy_backend 'solr-servers' do
+haproxy_config_backend 'solr-servers' do
   default_server do
     weight 100
     maxconn 5
@@ -85,50 +87,13 @@ haproxy_backend 'solr-servers' do
     fastinter 200
   end
 
-  server 'app.demo solr' do
-    hostname 'app.demo'
+  server 'solr.prod solr' do
+    hostname 'solr.prod'
     ip '1.1.1.1'
     port 8983
   end
 end
-
-haproxy_frontend 'solr-related-products' do
-  maxconn 2000
-  ip '127.0.0.1'
-  port 8983
-  default_backend 'solr-related-products-servers'
-end
-
-haproxy_backend 'solr-related-products-server' do
-  default_server do
-    weight 100
-    maxconn 5
-    check true
-    inter 2000
-    fall 10
-    rise 20
-    slowstart 20000
-    fastinter 200
-  end
-  
-  server 'app.demo solr-related-products' do
-    hostname 'solr-related-replica100.prod'
-    ip '1.1.1.1'
-    port 8984
-    weight 100
-    maxconn 5
-    check true
-    inter 2000
-    fall 10
-    rise 20
-    slowstart 20000
-    fastinter 200
-  end
-end
 ```
-
-
-TODO
 
 ## Contributing
 
