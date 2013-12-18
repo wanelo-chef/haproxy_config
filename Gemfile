@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 group :development, :test do
+  gem 'berkshelf', '~> 3.0.0.beta4'
   gem 'chefspec'
   gem 'foodcritic'
   gem 'guard-rspec'

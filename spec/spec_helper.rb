@@ -1,5 +1,6 @@
 require 'bundler/setup'
 require 'chefspec'
+require 'chefspec/berkshelf'
 require 'pry'
 
 Dir["#{File.dirname(__FILE__)}/../libraries/**/*.rb"].each { |f| require f unless /_spec\.rb$/.match(f) }

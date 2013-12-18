@@ -18,8 +18,8 @@ module ChefHelpers
   end
 
   def install_fixtures
-    FileUtils.mkdir_p('tmp/fixtures/recipes')
-    File.open('tmp/fixtures/metadata.rb', 'w') do |md|
+    FileUtils.mkdir_p("#{cookbook_path}/fixtures/recipes")
+    File.open("#{cookbook_path}/fixtures/metadata.rb", 'w') do |md|
       md.puts 'name "fixtures"'
       md.puts 'version "1.0.0"'
       md.puts "depends \"#{@cookbook_name}\""
@@ -32,7 +32,7 @@ module ChefHelpers
 
   def converge_recipe recipe_name, recipe_code
     install_fixtures
-    File.open("tmp/fixtures/recipes/#{recipe_name}.rb", 'w+') do |f|
+    File.open("#{cookbook_path}/fixtures/recipes/#{recipe_name}.rb", 'w+') do |f|
       f.puts recipe_code
     end
     runner.converge "fixtures::#{recipe_name}"
@@ -41,10 +41,13 @@ module ChefHelpers
 
   def runner
     @runner ||= ChefSpec::Runner.new(
-      platform: 'smartos', version: 'joyent_20130111T180733Z',
       step_into: runner_options[:step_into],
-      cookbook_path: %W(#{File.expand_path(Dir.pwd)}/tmp #{File.expand_path("..", Dir.pwd)})
+      cookbook_path: %W(#{cookbook_path} #{File.expand_path("..", Dir.pwd)})
     )
+  end
+
+  def cookbook_path
+    RSpec.configuration.cookbook_path
   end
 
   def step_into *lwrps
