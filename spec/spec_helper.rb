@@ -2,6 +2,8 @@ require 'bundler/setup'
 require 'chefspec'
 require 'pry'
 
+Dir["#{File.dirname(__FILE__)}/../libraries/**/*.rb"].each { |f| require f unless /_spec\.rb$/.match(f) }
+
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f unless /_spec\.rb$/.match(f) }
 
 RSpec.configure do |config|
@@ -18,5 +20,6 @@ RSpec.configure do |config|
 
   config.after :each do
     reset_chef
+    HaproxyConfig.instance.reset
   end
 end

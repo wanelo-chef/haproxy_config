@@ -1,11 +1,7 @@
-
 require 'fileutils'
 
 action :create do
-  ::FileUtils.mkdir_p(::File.dirname(node['haproxy_config']['config_file']))
-
-  ::File.open(node['haproxy_config']['config_file'], 'w') do |f|
-    f.puts 'global'
-    f.puts "  maxconn #{new_resource.maxconn}"
-  end
+  global_section = ::HaproxyConfigGlobal.new
+  global_section.update_with_resource(new_resource)
+  HaproxyConfig.instance.sections << global_section
 end

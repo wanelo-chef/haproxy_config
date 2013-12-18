@@ -1,51 +1,34 @@
 require 'spec_helper'
 
 describe 'haproxy_config::global' do
-  let(:haproxy_config_path) { File.expand_path('tmp/output') }
-  let(:haproxy_config_file) { "#{haproxy_config_path}/haproxy.config" }
+  before { step_into 'haproxy_config_global' }
 
-  before do
-    step_into 'haproxy_config_global'
-    chef_run.node.set['haproxy_config']['config_file'] = 'tmp/output/haproxy.config'
-  end
-
-  it 'creates nested directories if not existent' do
-    expect(File.exists?(haproxy_config_path)).to be_false
-
-    converge_recipe "basic_stuff", %[
-      include_recipe 'haproxy_config'
-      haproxy_config_global 'stuff' do
-        maxconn 6000
-      end
-    ]
-
-    expect(File.exists?(haproxy_config_path)).to be_true
-  end
-
-  it 'creates an haproxy config file based on node attributes' do
-    expect(File.exists?(haproxy_config_file)).to be_false
-
-    converge_recipe "basic_stuff", %[
-      include_recipe 'haproxy_config'
-      haproxy_config_global 'stuff' do
-        maxconn 6000
-      end
-    ]
-
-    expect(File.exists?(haproxy_config_file)).to be_true
-  end
-
-  it 'outputs global config into haproxy config' do
+  it 'adds a config instance to HaproxyConfig sections' do
     expect {
-      converge_recipe "basic_stuff", %[
+      converge_recipe "global", %[
         include_recipe 'haproxy_config'
         haproxy_config_global 'stuff' do
           maxconn 6000
         end
       ]
-    }.to write_haproxy_config('tmp/output/haproxy.config', <<-END, trim: 6)
-      global
+    }.to change {
+      HaproxyConfig.instance.sections.first
+    }.from(nil).to(an_instance_of(HaproxyConfigGlobal))
+  end
+
+  it 'updates config instance with new_resource' do
+    converge_recipe "global", %[
+      include_recipe 'haproxy_config'
+      haproxy_config_global 'stuff' do
         maxconn 6000
-    END
+        nbproc 2
+        user 'somebody'
+      end
+    ]
+
+    global_config = HaproxyConfig.instance.sections.first
+    expect(global_config.maxconn).to eq(6000)
+    expect(global_config.nbproc).to eq(2)
+    expect(global_config.user).to eq('somebody')
   end
 end
