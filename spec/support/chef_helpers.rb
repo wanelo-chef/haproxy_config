@@ -35,12 +35,12 @@ module ChefHelpers
     File.open("tmp/fixtures/recipes/#{recipe_name}.rb", 'w+') do |f|
       f.puts recipe_code
     end
-    chef_run.converge "fixtures::#{recipe_name}"
+    runner.converge "fixtures::#{recipe_name}"
     recipe_code
   end
 
-  def chef_run
-    @chef_run ||= ChefSpec::Runner.new(
+  def runner
+    @runner ||= ChefSpec::Runner.new(
       platform: 'smartos', version: 'joyent_20130111T180733Z',
       step_into: runner_options[:step_into],
       cookbook_path: %W(#{File.expand_path(Dir.pwd)}/tmp #{File.expand_path("..", Dir.pwd)})

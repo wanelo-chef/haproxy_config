@@ -33,14 +33,14 @@ describe 'haproxy_config::global' do
   end
 
   it 'notifies haproxy_config_file' do
-    chef_run.node.set['haproxy_config']['config_file'] = '/path/to/haproxy.conf'
+    runner.node.set['haproxy_config']['config_file'] = '/path/to/haproxy.conf'
 
     converge_recipe "global", %[
       include_recipe 'haproxy_config'
       haproxy_config_global 'stuff'
     ]
 
-    global_resource = chef_run.run_context.resource_collection.find(:haproxy_config_global => 'stuff')
+    global_resource = runner.run_context.resource_collection.find(:haproxy_config_global => 'stuff')
     expect(global_resource).to notify('haproxy_config_file[/path/to/haproxy.conf]').to(:write)
   end
 end
